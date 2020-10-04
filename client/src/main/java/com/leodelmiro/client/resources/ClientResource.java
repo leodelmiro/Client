@@ -1,5 +1,6 @@
 package com.leodelmiro.client.resources;
 
+import com.leodelmiro.client.dto.ClientDTO;
 import com.leodelmiro.client.entities.Client;
 import com.leodelmiro.client.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,9 @@ public class ClientResource {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Client> findById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(clientService.findById(id));
+    public ResponseEntity<ClientDTO> findById(@PathVariable Long id) {
+        ClientDTO dto = clientService.findById(id);
+        return ResponseEntity.ok().body(dto);
     }
 
     @PostMapping

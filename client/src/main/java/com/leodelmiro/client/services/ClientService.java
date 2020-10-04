@@ -1,7 +1,9 @@
 package com.leodelmiro.client.services;
 
+import com.leodelmiro.client.dto.ClientDTO;
 import com.leodelmiro.client.entities.Client;
 import com.leodelmiro.client.repositories.ClientRepository;
+import com.leodelmiro.client.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -22,8 +25,10 @@ public class ClientService {
     }
 
     @Transactional(readOnly = true)
-    public Client findById(Long id){
-        return clientRepository.findById(id).get();
+    public ClientDTO findById(Long id){
+        Optional<Client> obj = clientRepository.findById(id);
+        Client client = obj.orElseThrow(() -> new ResourceNotFoundException("Client not found"));
+        return new ClientDTO(client);
     }
 
     @Transactional
