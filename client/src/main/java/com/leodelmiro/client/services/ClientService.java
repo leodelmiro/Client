@@ -53,7 +53,11 @@ public class ClientService {
     }
 
     public void delete(Long id) {
-        clientRepository.deleteById(id);
+        try {
+            clientRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id " + id + " not found");
+        }
     }
 
     private void dtoToEntity(ClientDTO dto, Client entity){
