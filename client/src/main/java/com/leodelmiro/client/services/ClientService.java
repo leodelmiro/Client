@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -33,27 +34,33 @@ public class ClientService {
 
     @Transactional
     public ClientDTO insert(ClientDTO dto) {
-        Client entity = dtoToEntity(dto);
+        Client entity = new Client();
+        dtoToEntity(dto, entity);
         clientRepository.save(entity);
         return new ClientDTO(entity);
     }
 
     @Transactional
-    public Client update(Long id, Client client) {
-        return clientRepository.save(client);
+    public ClientDTO update(Long id, ClientDTO dto) {
+        try {
+            Client entity = clientRepository.getOne(id);
+            dtoToEntity(dto, entity);
+            entity = clientRepository.save(entity);
+            return new ClientDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Id " + id + " not found");
+        }
     }
 
     public void delete(Long id) {
         clientRepository.deleteById(id);
     }
 
-    private Client dtoToEntity(ClientDTO dto){
-        Client client = new Client();
-        client.setName(dto.getName());
-        client.setCpf(dto.getCpf());
-        client.setIncome(dto.getIncome());
-        client.setBirthDate(dto.getBirthDate());
-        client.setChildren(dto.getChildren());
-        return client;
+    private void dtoToEntity(ClientDTO dto, Client entity){
+        entity.setName(dto.getName());
+        entity.setCpf(dto.getCpf());
+        entity.setIncome(dto.getIncome());
+        entity.setBirthDate(dto.getBirthDate());
+        entity.setChildren(dto.getChildren());
     }
 }
