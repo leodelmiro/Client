@@ -32,8 +32,10 @@ public class ClientService {
     }
 
     @Transactional
-    public Client insert(Client client) {
-        return clientRepository.save(client);
+    public ClientDTO insert(ClientDTO dto) {
+        Client entity = dtoToEntity(dto);
+        clientRepository.save(entity);
+        return new ClientDTO(entity);
     }
 
     @Transactional
@@ -43,5 +45,15 @@ public class ClientService {
 
     public void delete(Long id) {
         clientRepository.deleteById(id);
+    }
+
+    private Client dtoToEntity(ClientDTO dto){
+        Client client = new Client();
+        client.setName(dto.getName());
+        client.setCpf(dto.getCpf());
+        client.setIncome(dto.getIncome());
+        client.setBirthDate(dto.getBirthDate());
+        client.setChildren(dto.getChildren());
+        return client;
     }
 }
